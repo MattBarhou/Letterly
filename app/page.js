@@ -1,4 +1,5 @@
 import ApplicationForm from "@/components/ApplicationForm";
+import LetterlyLogo from "@/components/LetterlyLogo";
 
 const OUTPUTS = [
   {
@@ -73,8 +74,8 @@ export default function Home() {
       <div className="navbar bg-base-100/80 backdrop-blur-md border-b border-base-300 sticky top-0 z-50 px-4 lg:px-8 max-w-6xl mx-auto">
         <div className="flex-1">
           <a href="#" className="btn btn-ghost text-xl font-bold gap-2 px-2">
-            <span className="text-primary">⚡</span>
-            JobSprint
+            <LetterlyLogo />
+            Letterly
           </a>
         </div>
         <div className="flex-none hidden sm:flex gap-1">
@@ -108,7 +109,7 @@ export default function Home() {
           </h1>
           <p className="py-6 text-lg text-base-content/70 max-w-2xl mx-auto leading-relaxed">
             Stop spending hours rewriting cover letters for every application.
-            JobSprint generates five tailored materials from your resume and a
+            Letterly generates five tailored materials from your resume and a
             job posting — in under a minute.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -199,7 +200,7 @@ export default function Home() {
               Five documents.
             </h2>
             <p className="text-sm text-base-content/55 leading-relaxed max-w-sm">
-              Every application asks for something different. JobSprint produces
+              Every application asks for something different. Letterly produces
               the full set at once — pick what you need for each company.
             </p>
             <a
@@ -244,8 +245,9 @@ export default function Home() {
       {/* Footer */}
       <footer className="footer footer-center p-10 bg-base-200 text-base-content/50 border-t border-base-300">
         <div className="flex flex-col items-center gap-2">
-          <p className="font-bold text-base-content/70 text-lg">
-            <span className="text-primary">⚡</span> JobSprint
+          <p className="font-bold text-base-content/70 text-lg flex items-center gap-2">
+            <LetterlyLogo />
+            Letterly
           </p>
           <p className="text-sm">
             AI Job Application Assistant for early-career developers

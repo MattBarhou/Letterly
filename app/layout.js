@@ -12,7 +12,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "JobSprint — AI Job Application Assistant",
+  title: "Letterly — AI Job Application Assistant",
   description:
     "Generate tailored cover letters, recruiter emails, LinkedIn messages, and ATS-friendly application materials for tech roles.",
 };
