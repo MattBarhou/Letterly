@@ -3,6 +3,7 @@
 import { useState } from "react";
 import GeneratedOutputs from "@/components/GeneratedOutputs";
 import ResumeUpload from "@/components/ResumeUpload";
+import UsageBanner from "@/components/UsageBanner";
 
 const INITIAL_FORM = {
   resumeText: "",
@@ -19,6 +20,7 @@ export default function ApplicationForm() {
   const [apiError, setApiError] = useState("");
   const [outputs, setOutputs] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [usageRefreshKey, setUsageRefreshKey] = useState(0);
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -74,12 +76,22 @@ export default function ApplicationForm() {
       const data = await response.json();
 
       if (!response.ok) {
-        setApiError(data.error || "Something went wrong. Please try again.");
+        if (response.status === 401) {
+          setApiError("Sign in to generate application materials.");
+        } else if (response.status === 402) {
+          setApiError(
+            data.error ||
+              "You've reached your generation limit. Upgrade your plan to continue."
+          );
+        } else {
+          setApiError(data.error || "Something went wrong. Please try again.");
+        }
         setOutputs(null);
         return;
       }
 
       setOutputs(data);
+      setUsageRefreshKey((key) => key + 1);
       document.getElementById("results")?.scrollIntoView({ behavior: "smooth" });
     } catch {
       setApiError("Network error. Check your connection and try again.");
@@ -113,6 +125,8 @@ export default function ApplicationForm() {
           className="card bg-base-100 shadow-xl border border-base-300"
         >
           <div className="card-body gap-2">
+            <UsageBanner refreshKey={usageRefreshKey} />
+
             {/* Section: Your background */}
             <div className="pb-2">
               <h3 className="font-semibold text-base text-base-content mb-1">
@@ -333,7 +347,13 @@ export default function ApplicationForm() {
           </div>
         </form>
 
-        {outputs && <GeneratedOutputs outputs={outputs} />}
+        {outputs && (
+          <GeneratedOutputs
+            outputs={outputs}
+            company={form.company}
+            jobTitle={form.jobTitle}
+          />
+        )}
       </div>
     </section>
   );

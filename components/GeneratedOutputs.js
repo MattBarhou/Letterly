@@ -73,6 +73,26 @@ function CheckIcon() {
   );
 }
 
+function DownloadIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="w-4 h-4 shrink-0"
+      aria-hidden="true"
+    >
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="7 10 12 15 17 10" />
+      <line x1="12" x2="12" y1="15" y2="3" />
+    </svg>
+  );
+}
+
 function CopyButton({ copied, onClick }) {
   return (
     <button
@@ -100,13 +120,34 @@ function CopyButton({ copied, onClick }) {
   );
 }
 
-export default function GeneratedOutputs({ outputs }) {
+export default function GeneratedOutputs({ outputs, company, jobTitle }) {
   const [activeTab, setActiveTab] = useState(OUTPUT_SECTIONS[0].key);
   const [copiedKey, setCopiedKey] = useState(null);
+  const [canExportZip, setCanExportZip] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportError, setExportError] = useState("");
 
   useEffect(() => {
     setActiveTab(OUTPUT_SECTIONS[0].key);
     setCopiedKey(null);
+    setExportError("");
+  }, [outputs]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch("/api/usage")
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data) => {
+        if (!cancelled && data) {
+          setCanExportZip(data.canExportZip === true);
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      cancelled = true;
+    };
   }, [outputs]);
 
   const activeSection = OUTPUT_SECTIONS.find((s) => s.key === activeTab);
@@ -125,6 +166,40 @@ export default function GeneratedOutputs({ outputs }) {
     }
   }
 
+  async function handleExportZip() {
+    setExportError("");
+    setIsExporting(true);
+
+    try {
+      const response = await fetch("/api/export", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ company, jobTitle, outputs }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        setExportError(data.error || "Export failed. Please try again.");
+        return;
+      }
+
+      const blob = await response.blob();
+      const disposition = response.headers.get("Content-Disposition");
+      const filenameMatch = disposition?.match(/filename="(.+)"/);
+      const filename = filenameMatch?.[1] || "Letterly_export.zip";
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      setExportError("Network error. Check your connection and try again.");
+    } finally {
+      setIsExporting(false);
+    }
+  }
+
   return (
     <div id="results" className="mt-14">
       <div className="border border-base-300 rounded-2xl bg-base-100 overflow-hidden">
@@ -137,10 +212,40 @@ export default function GeneratedOutputs({ outputs }) {
               Application materials
             </h3>
           </div>
-          <span className="text-xs text-base-content/40 tabular-nums shrink-0">
-            5 documents
-          </span>
+          <div className="flex items-center gap-3 shrink-0">
+            {canExportZip ? (
+              <button
+                type="button"
+                onClick={handleExportZip}
+                disabled={isExporting}
+                className="inline-flex items-center justify-center gap-2 h-9 min-h-9 px-4 rounded-lg text-sm font-medium border border-primary text-primary bg-primary/5 hover:bg-primary/10 transition-colors disabled:opacity-60"
+              >
+                {isExporting ? (
+                  <span className="loading loading-spinner loading-sm" />
+                ) : (
+                  <DownloadIcon />
+                )}
+                <span>{isExporting ? "Exporting…" : "Download ZIP"}</span>
+              </button>
+            ) : (
+              <a
+                href="/pricing"
+                className="text-xs text-base-content/50 hover:text-primary transition-colors"
+              >
+                ZIP export on Premium
+              </a>
+            )}
+            <span className="text-xs text-base-content/40 tabular-nums">
+              5 documents
+            </span>
+          </div>
         </div>
+
+        {exportError && (
+          <div role="alert" className="px-5 sm:px-6 py-3 border-b border-base-300 bg-error/5 text-sm text-error">
+            {exportError}
+          </div>
+        )}
 
         <div className="flex flex-col lg:flex-row lg:min-h-[28rem]">
           <nav

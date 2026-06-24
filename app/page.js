@@ -1,5 +1,6 @@
 import ApplicationForm from "@/components/ApplicationForm";
 import LetterlyLogo from "@/components/LetterlyLogo";
+import Navbar from "@/components/Navbar";
 
 const OUTPUTS = [
   {
@@ -70,31 +71,7 @@ const BENEFITS = [
 export default function Home() {
   return (
     <div className="min-h-screen bg-base-200">
-      {/* Navbar */}
-      <div className="navbar bg-base-100/80 backdrop-blur-md border-b border-base-300 sticky top-0 z-50 px-4 lg:px-8 max-w-6xl mx-auto">
-        <div className="flex-1">
-          <a href="#" className="btn btn-ghost text-xl font-bold gap-2 px-2">
-            <LetterlyLogo />
-            Letterly
-          </a>
-        </div>
-        <div className="flex-none hidden sm:flex gap-1">
-          <a href="#how-it-works" className="btn btn-ghost btn-sm">
-            How it works
-          </a>
-          <a href="#features" className="btn btn-ghost btn-sm">
-            Features
-          </a>
-          <a href="#generate" className="btn btn-primary btn-sm">
-            Get Started
-          </a>
-        </div>
-        <div className="flex-none sm:hidden">
-          <a href="#generate" className="btn btn-primary btn-sm">
-            Get Started
-          </a>
-        </div>
-      </div>
+      <Navbar />
 
       {/* Hero */}
       <section className="relative overflow-hidden bg-linear-to-br from-primary/5 via-base-100 to-secondary/10 py-20 lg:py-28">
@@ -258,6 +235,9 @@ export default function Home() {
             </a>
             <a href="#features" className="link link-hover">
               Features
+            </a>
+            <a href="/pricing" className="link link-hover">
+              Pricing
             </a>
             <a href="#generate" className="link link-hover">
               Generate
