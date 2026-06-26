@@ -33,8 +33,6 @@ const PLANS = [
       "Cancel anytime",
     ],
     cta: "Subscribe",
-    priceIdMonthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_STARTER_MONTHLY,
-    priceIdAnnual: process.env.NEXT_PUBLIC_STRIPE_PRICE_STARTER_ANNUAL,
     highlighted: true,
   },
   {
@@ -50,8 +48,6 @@ const PLANS = [
       "For recruiting season",
     ],
     cta: "Subscribe",
-    priceIdMonthly: process.env.NEXT_PUBLIC_STRIPE_PRICE_PREMIUM_MONTHLY,
-    priceIdAnnual: process.env.NEXT_PUBLIC_STRIPE_PRICE_PREMIUM_ANNUAL,
     highlighted: false,
   },
 ];
@@ -62,12 +58,7 @@ export default function PricingCards() {
   const [loadingId, setLoadingId] = useState(null);
   const [error, setError] = useState("");
 
-  async function handleCheckout(priceId, planId) {
-    if (!priceId) {
-      setError("Stripe prices are not configured yet.");
-      return;
-    }
-
+  async function handleCheckout(planId) {
     if (!isSignedIn) {
       setError("Sign in first, then choose a plan.");
       return;
@@ -80,7 +71,7 @@ export default function PricingCards() {
       const response = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ priceId }),
+        body: JSON.stringify({ planId, billing }),
       });
 
       const data = await response.json();
@@ -129,7 +120,6 @@ export default function PricingCards() {
         {PLANS.map((plan) => {
           const isAnnual = billing === "annual";
           const price = isAnnual ? plan.priceAnnual : plan.priceMonthly;
-          const priceId = isAnnual ? plan.priceIdAnnual : plan.priceIdMonthly;
           const isPaid = plan.id !== "free";
 
           return (
@@ -170,7 +160,7 @@ export default function PricingCards() {
                       type="button"
                       className={`btn w-full ${plan.highlighted ? "btn-primary" : "btn-outline btn-primary"}`}
                       disabled={loadingId === plan.id}
-                      onClick={() => handleCheckout(priceId, plan.id)}
+                      onClick={() => handleCheckout(plan.id)}
                     >
                       {loadingId === plan.id ? (
                         <span className="loading loading-spinner loading-sm" />

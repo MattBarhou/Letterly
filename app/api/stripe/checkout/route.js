@@ -1,6 +1,18 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import { getStripePriceId } from "@/lib/plans";
 import { getAppUrl, getStripe } from "@/lib/stripe";
+
+function getCheckoutErrorMessage(error) {
+  if (error?.type === "StripeInvalidRequestError") {
+    if (error.code === "resource_missing") {
+      return "This plan is not available. Check that your Stripe price IDs match your API key mode (test vs live).";
+    }
+    return error.message;
+  }
+
+  return "Could not start checkout. Please try again.";
+}
 
 export async function POST(request) {
   try {
@@ -17,9 +29,23 @@ export async function POST(request) {
       );
     }
 
-    const { priceId } = await request.json();
+    const body = await request.json();
+    const { planId, billing, priceId: legacyPriceId } = body;
+
+    let priceId = legacyPriceId;
+
+    if (planId && billing) {
+      priceId = getStripePriceId(planId, billing);
+    }
+
     if (!priceId) {
-      return NextResponse.json({ error: "Price ID is required." }, { status: 400 });
+      return NextResponse.json(
+        {
+          error:
+            "Subscription prices are not configured. Add STRIPE_PRICE_* env vars and redeploy.",
+        },
+        { status: 500 }
+      );
     }
 
     const user = await currentUser();
@@ -27,7 +53,6 @@ export async function POST(request) {
 
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
-      payment_method_types: ["card"],
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${appUrl}/?checkout=success`,
       cancel_url: `${appUrl}/pricing?checkout=cancel`,
@@ -36,14 +61,16 @@ export async function POST(request) {
       subscription_data: {
         metadata: { userId },
       },
-      customer_email: user?.emailAddresses?.[0]?.emailAddress,
+      ...(user?.emailAddresses?.[0]?.emailAddress
+        ? { customer_email: user.emailAddresses[0].emailAddress }
+        : {}),
     });
 
     return NextResponse.json({ url: session.url });
   } catch (error) {
     console.error("Stripe checkout error:", error);
     return NextResponse.json(
-      { error: "Could not start checkout. Please try again." },
+      { error: getCheckoutErrorMessage(error) },
       { status: 500 }
     );
   }
