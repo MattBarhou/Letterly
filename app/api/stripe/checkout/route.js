@@ -18,14 +18,17 @@ export async function POST(request) {
   try {
     const { userId } = await auth();
     if (!userId) {
-      return NextResponse.json({ error: "Sign in to subscribe." }, { status: 401 });
+      return NextResponse.json(
+        { error: "Sign in to subscribe." },
+        { status: 401 },
+      );
     }
 
     const stripe = getStripe();
     if (!stripe) {
       return NextResponse.json(
         { error: "Stripe is not configured." },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -44,7 +47,7 @@ export async function POST(request) {
           error:
             "Subscription prices are not configured. Add STRIPE_PRICE_* env vars and redeploy.",
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -71,7 +74,7 @@ export async function POST(request) {
     console.error("Stripe checkout error:", error);
     return NextResponse.json(
       { error: getCheckoutErrorMessage(error) },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

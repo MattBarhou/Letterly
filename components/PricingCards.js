@@ -11,11 +11,7 @@ const PLANS = [
     priceAnnual: 0,
     limit: "3 generations",
     limitDetail: "lifetime",
-    features: [
-      "All 5 output types",
-      "PDF resume upload",
-      "Company research",
-    ],
+    features: ["All 5 output types", "PDF resume upload", "Company research"],
     cta: "Get started free",
     priceId: null,
     highlighted: false,
@@ -24,7 +20,7 @@ const PLANS = [
     id: "starter",
     name: "Starter",
     priceMonthly: 9,
-    priceAnnual: 70,
+    priceAnnual: 35,
     limit: "20 generations",
     limitDetail: "per month",
     features: [
@@ -38,8 +34,8 @@ const PLANS = [
   {
     id: "premium",
     name: "Premium",
-    priceMonthly: 20,
-    priceAnnual: 180,
+    priceMonthly: 12,
+    priceAnnual: 65,
     limit: "50 generations",
     limitDetail: "per month",
     features: [
@@ -144,7 +140,9 @@ export default function PricingCards() {
                 </div>
                 <p className="text-sm font-medium text-base-content/85">
                   {plan.limit}{" "}
-                  <span className="text-base-content/60">{plan.limitDetail}</span>
+                  <span className="text-base-content/60">
+                    {plan.limitDetail}
+                  </span>
                 </p>
                 <ul className="mt-4 space-y-2 text-sm text-base-content/80">
                   {plan.features.map((feature) => (
