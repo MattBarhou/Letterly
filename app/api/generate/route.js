@@ -99,7 +99,7 @@ async function reviseCoverLetterWordCounts(openai, result) {
     {
       role: "system",
       content:
-        "You fix cover letter word counts precisely. Always respond with valid JSON only.",
+        "You fix cover letter word counts precisely while preserving the business letter header format with bracket placeholders. Always respond with valid JSON only.",
     },
     {
       role: "user",
@@ -185,7 +185,7 @@ export async function POST(request) {
       {
         role: "system",
         content:
-          "You are a helpful career assistant for early-career software engineers. Always respond with valid JSON only. Cover letter word counts are strict requirements.",
+          "You are a helpful career assistant for early-career software engineers. Always respond with valid JSON only. Cover letters must use standard business letter format with bracket placeholders in the header. Cover letter word counts are strict requirements.",
       },
       {
         role: "user",
