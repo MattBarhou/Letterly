@@ -191,8 +191,12 @@ export default function GeneratedOutputs({ outputs, company, jobTitle }) {
       const link = document.createElement("a");
       link.href = url;
       link.download = filename;
+      // Safari/Firefox require the anchor to be in the DOM, and revoking the
+      // blob URL too early cancels the download.
+      document.body.appendChild(link);
       link.click();
-      URL.revokeObjectURL(url);
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 10_000);
       await fetchUsage();
     } catch {
       setExportError("Network error. Check your connection and try again.");
