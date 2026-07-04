@@ -11,9 +11,9 @@ import {
 } from "@/lib/seo";
 
 export const metadata = createPageMetadata({
-  title: "AI Cover Letter Generator for Internships & Tech Jobs",
+  title: "Job Application Hub for Internships & Tech Roles",
   description:
-    "Generate tailored cover letters, recruiter emails, LinkedIn messages, and ATS-friendly application materials for internships, co-ops, and new grad tech roles. Free to start.",
+    "Generate tailored application materials, save every application, track your pipeline, and prep for interviews — built for internships, co-ops, and new grad tech roles. Free to start.",
   path: "/",
 });
 
@@ -53,48 +53,53 @@ const OUTPUTS = [
 const HOW_IT_WORKS = [
   {
     step: "1",
-    title: "Upload or paste your resume",
-    desc: "Drop in a PDF or paste your resume text — education, projects, skills, and experience.",
+    title: "Add your resume",
+    desc: "Upload a PDF or paste your resume once — Letterly saves it for every application you generate.",
   },
   {
     step: "2",
-    title: "Add the job details",
-    desc: "Paste the internship or job posting, company name, and title. Pick a tone that fits the company.",
+    title: "Import or paste the job",
+    desc: "Paste the posting or import from a job URL. Add the company, title, and tone that fits the role.",
   },
   {
     step: "3",
-    title: "Copy & apply",
-    desc: "Review five tailored outputs, copy the ones you need, and send your application.",
+    title: "Generate materials",
+    desc: "Get five tailored outputs in one run: cover letters, recruiter email, LinkedIn message, and ATS text.",
+  },
+  {
+    step: "4",
+    title: "Track & follow through",
+    desc: "Every application is saved to your hub. Update status, export a ZIP, and generate follow-ups or interview prep.",
   },
 ];
 
 const BENEFITS = [
   {
-    title: "Resume-accurate cover letters",
-    desc: "Content is based on your real experience — no invented skills or fake metrics.",
+    title: "One hub for your search",
+    desc: "Generate materials, save applications, track status, and revisit past roles — no more scattered docs and tabs.",
   },
   {
-    title: "Role-specific for each application",
-    desc: "Every cover letter and email is tailored to the company and job description you provide.",
+    title: "Resume-accurate content",
+    desc: "Every output is based on your real experience — no invented skills, employers, or fake metrics.",
   },
   {
-    title: "Built for internships & new grads",
-    desc: "Written for interns, co-ops, and junior developers applying to software engineering and tech roles.",
+    title: "Built for early-career tech",
+    desc: "Designed for interns, co-ops, and new grads applying to software engineering and tech roles.",
   },
 ];
 
 const USE_CASES = [
   {
-    title: "Software engineering internships",
-    desc: "Turn one resume into a custom cover letter for each SWE, backend, frontend, or full-stack internship posting.",
+    title: "Applying to dozens of roles",
+    desc: "Generate tailored materials for each posting, save them automatically, and track where you've applied.",
   },
   {
-    title: "New grad and junior developer roles",
-    desc: "Generate professional cover letters that highlight projects, coursework, and early-career experience.",
+    title: "Campus recruiting season",
+    desc: "Move fast on internship and new grad postings with job URL import, ZIP exports, and a clear pipeline view.",
   },
   {
-    title: "Campus recruiting & referrals",
-    desc: "Pair a strong cover letter with a recruiter email and LinkedIn message for the same opportunity.",
+    title: "After you hear back",
+    desc: "Generate follow-up emails, thank-you notes, and interview prep from the same saved application.",
   },
 ];
 
@@ -117,27 +122,26 @@ export default function Home() {
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent pointer-events-none" />
             <div className="relative max-w-4xl px-4 mx-auto text-center">
               <div className="badge badge-primary badge-outline mb-6 font-medium">
-                AI cover letter generator for interns & new grads
+                Your application command center
               </div>
               <h1
                 id="hero-heading"
                 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-tight"
               >
-                Generate cover letters for{" "}
-                <span className="text-primary">internships & tech jobs</span>
+                Your job application hub for{" "}
+                <span className="text-primary">internships & tech roles</span>
               </h1>
               <p className="py-6 text-lg text-base-content/70 max-w-2xl mx-auto leading-relaxed">
-                Letterly is an AI cover letter generator that creates five
-                tailored application materials from your resume and a job
-                posting — cover letters, recruiter emails, LinkedIn messages,
-                and ATS-ready text in under a minute.
+                Generate tailored materials, save every application, track your
+                pipeline, and prep for interviews — all from your resume and a
+                job posting.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <a
                   href="#generate"
                   className="btn btn-primary btn-lg shadow-lg shadow-primary/20"
                 >
-                  Generate Cover Letters Free
+                  Get started free
                 </a>
                 <a href="#how-it-works" className="btn btn-ghost btn-lg">
                   See how it works →
@@ -148,25 +152,25 @@ export default function Home() {
                   <span className="text-success font-bold" aria-hidden="true">
                     ✓
                   </span>
-                  5 outputs per run
+                  5 materials per generation
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="text-success font-bold" aria-hidden="true">
+                    ✓
+                  </span>
+                  Saved application history
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="text-success font-bold" aria-hidden="true">
+                    ✓
+                  </span>
+                  Pipeline tracking
                 </span>
                 <span className="flex items-center gap-1.5">
                   <span className="text-success font-bold" aria-hidden="true">
                     ✓
                   </span>
                   3 free generations & ZIP exports
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <span className="text-success font-bold" aria-hidden="true">
-                    ✓
-                  </span>
-                  Ready in ~30 seconds
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <span className="text-success font-bold" aria-hidden="true">
-                    ✓
-                  </span>
-                  Built for tech roles
                 </span>
               </div>
             </div>
@@ -183,14 +187,14 @@ export default function Home() {
                 How it works
               </p>
               <h2 id="how-it-works-heading" className="text-3xl font-bold mb-3">
-                Three steps to better cover letters
+                From resume to tracked application
               </h2>
               <p className="text-base-content/70 max-w-xl mx-auto">
-                Upload your resume PDF or paste your info, add an internship or
-                job posting, and get ready-to-send application materials.
+                Letterly handles generation, storage, and follow-through — so
+                you spend less time organizing and more time applying.
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {HOW_IT_WORKS.map((item) => (
                 <article
                   key={item.step}
@@ -215,7 +219,7 @@ export default function Home() {
           >
             <div className="max-w-5xl mx-auto">
               <h2 id="benefits-heading" className="sr-only">
-                Why use Letterly for cover letters
+                Why use Letterly for your job search
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {BENEFITS.map((item) => (
@@ -240,12 +244,11 @@ export default function Home() {
                 Use cases
               </p>
               <h2 id="use-cases-heading" className="text-3xl font-bold mb-3">
-                Cover letters for internships, co-ops, and early-career roles
+                Built for the way you actually apply
               </h2>
               <p className="text-base-content/70 max-w-2xl mx-auto">
-                Applying to multiple companies means rewriting the same story
-                every time. Letterly helps you ship personalized cover letters
-                faster without sounding generic or AI-written.
+                Whether you&apos;re sending five applications or fifty, Letterly
+                keeps your materials, status, and next steps in one place.
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -280,20 +283,20 @@ export default function Home() {
                   id="features-heading"
                   className="text-2xl sm:text-3xl font-semibold tracking-tight text-base-content mb-4 leading-snug"
                 >
-                  One submission.
+                  Every generation.
                   <br />
-                  Five application documents.
+                  Five ready-to-use documents.
                 </h2>
                 <p className="text-sm text-base-content/55 leading-relaxed max-w-sm">
-                  Every internship and job application asks for something
-                  different. Letterly produces cover letters, emails, and ATS
-                  text in one run — pick what you need for each company.
+                  Each application produces cover letters, outreach emails, and
+                  ATS text in one run. Export as a ZIP or revisit anytime from
+                  your applications hub.
                 </p>
                 <a
                   href="#generate"
                   className="inline-flex items-center gap-1.5 mt-8 text-sm font-medium text-base-content/70 hover:text-base-content transition-colors"
                 >
-                  Start generating cover letters
+                  Start your first application
                   <span aria-hidden="true">→</span>
                 </a>
               </div>
@@ -339,11 +342,11 @@ export default function Home() {
                 FAQ
               </p>
               <h2 id="faq-heading" className="text-3xl font-bold mb-3">
-                Cover letter generator questions
+                Frequently asked questions
               </h2>
               <p className="text-base-content/70">
-                Common questions about AI cover letters, internships, and tech
-                job applications.
+                Common questions about generating materials, tracking
+                applications, and applying to tech roles.
               </p>
             </div>
             <div className="space-y-4">
@@ -378,8 +381,8 @@ export default function Home() {
               Letterly
             </p>
             <p className="text-sm max-w-md">
-              AI cover letter generator and job application assistant for
-              internships, co-ops, and early-career developers.
+              Your application command center for internships, co-ops, and
+              early-career developers.
             </p>
             <nav aria-label="Footer navigation" className="flex gap-4 mt-2 text-sm">
               <a href="#how-it-works" className="link link-hover">

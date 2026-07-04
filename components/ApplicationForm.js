@@ -1,5 +1,7 @@
 "use client";
 
+import { useAuth } from "@clerk/nextjs";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import GeneratedOutputs from "@/components/GeneratedOutputs";
 import ResumeUpload from "@/components/ResumeUpload";
@@ -8,6 +10,7 @@ import UsageBanner from "@/components/UsageBanner";
 const INITIAL_FORM = {
   resumeText: "",
   jobDescription: "",
+  jobUrl: "",
   company: "",
   jobTitle: "",
   yearsExperience: "0",
@@ -18,11 +21,16 @@ const COMPANY_PREFETCH_DELAY_MS = 600;
 const MIN_COMPANY_LENGTH = 2;
 
 export default function ApplicationForm() {
+  const { isSignedIn } = useAuth();
   const [form, setForm] = useState(INITIAL_FORM);
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState("");
   const [outputs, setOutputs] = useState(null);
+  const [savedApplicationId, setSavedApplicationId] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isImportingJob, setIsImportingJob] = useState(false);
+  const [importError, setImportError] = useState("");
+  const [features, setFeatures] = useState(null);
   const [usageRefreshKey, setUsageRefreshKey] = useState(0);
   const prefetchTimeoutRef = useRef(null);
   const lastPrefetchedCompanyRef = useRef("");
@@ -41,6 +49,38 @@ export default function ApplicationForm() {
       body: JSON.stringify({ company: trimmed }),
     }).catch(() => {});
   }
+
+  useEffect(() => {
+    if (!isSignedIn) {
+      return;
+    }
+
+    fetch("/api/profile")
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data) => {
+        if (!data?.profile) {
+          return;
+        }
+
+        setForm((prev) => ({
+          ...prev,
+          resumeText: prev.resumeText || data.profile.resumeText || "",
+          tone: prev.tone || data.profile.defaultTone || "Professional",
+          yearsExperience:
+            prev.yearsExperience || data.profile.defaultYearsExperience || "0",
+        }));
+      })
+      .catch(() => {});
+
+    fetch("/api/applications")
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data) => {
+        if (data?.features) {
+          setFeatures(data.features);
+        }
+      })
+      .catch(() => {});
+  }, [isSignedIn]);
 
   useEffect(() => {
     const company = form.company.trim();
@@ -90,6 +130,43 @@ export default function ApplicationForm() {
     return newErrors;
   }
 
+  async function handleImportJob() {
+    const jobUrl = form.jobUrl.trim();
+    if (!jobUrl) {
+      setImportError("Enter a job posting URL first.");
+      return;
+    }
+
+    setImportError("");
+    setIsImportingJob(true);
+
+    try {
+      const response = await fetch("/api/parse-job", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: jobUrl }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setImportError(data.error || "Could not import job posting.");
+        return;
+      }
+
+      setForm((prev) => ({
+        ...prev,
+        company: data.company || prev.company,
+        jobTitle: data.jobTitle || prev.jobTitle,
+        jobDescription: data.jobDescription || prev.jobDescription,
+      }));
+    } catch {
+      setImportError("Network error. Please try again.");
+    } finally {
+      setIsImportingJob(false);
+    }
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     const validationErrors = validate();
@@ -100,6 +177,7 @@ export default function ApplicationForm() {
 
     setErrors({});
     setApiError("");
+    setSavedApplicationId(null);
     setIsGenerating(true);
 
     try {
@@ -109,6 +187,7 @@ export default function ApplicationForm() {
         body: JSON.stringify({
           resume: form.resumeText,
           jobDescription: form.jobDescription,
+          jobUrl: form.jobUrl,
           company: form.company,
           jobTitle: form.jobTitle,
           yearsExperience: form.yearsExperience,
@@ -134,6 +213,7 @@ export default function ApplicationForm() {
       }
 
       setOutputs(data);
+      setSavedApplicationId(data.applicationId || null);
       setUsageRefreshKey((key) => key + 1);
       document.getElementById("results")?.scrollIntoView({ behavior: "smooth" });
     } catch {
@@ -209,8 +289,66 @@ export default function ApplicationForm() {
               </h3>
               <p className="text-sm text-base-content/80 mb-4">
                 Copy the full job posting from LinkedIn, the company careers
-                page, or WaterlooWorks.
+                page, or WaterlooWorks — or import from a URL on Starter and
+                Premium plans.
               </p>
+
+              <div className="form-control mb-4">
+                <label className="label py-1" htmlFor="jobUrl">
+                  <span className="label-text font-semibold text-base-content">
+                    Job posting URL
+                  </span>
+                  <span className="text-xs text-base-content/50">Optional</span>
+                </label>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <input
+                    id="jobUrl"
+                    name="jobUrl"
+                    type="url"
+                    className="input input-bordered w-full text-base-content placeholder:text-base-content/45 focus:input-primary"
+                    placeholder="https://jobs.lever.co/company/role-id"
+                    value={form.jobUrl}
+                    onChange={handleChange}
+                    disabled={isGenerating || isImportingJob}
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-outline btn-primary sm:shrink-0"
+                    onClick={handleImportJob}
+                    disabled={
+                      isGenerating ||
+                      isImportingJob ||
+                      !features?.jobUrlImport
+                    }
+                  >
+                    {isImportingJob ? (
+                      <>
+                        <span className="loading loading-spinner loading-sm" />
+                        Importing…
+                      </>
+                    ) : (
+                      "Import"
+                    )}
+                  </button>
+                </div>
+                {!features?.jobUrlImport && isSignedIn && (
+                  <label className="label py-1">
+                    <span className="text-xs text-base-content/50">
+                      Job URL import is available on Starter and Premium.{" "}
+                      <Link href="/pricing" className="link link-primary">
+                        Upgrade
+                      </Link>
+                    </span>
+                  </label>
+                )}
+                {importError && (
+                  <label className="label py-1">
+                    <span className="text-sm font-medium text-error">
+                      {importError}
+                    </span>
+                  </label>
+                )}
+              </div>
 
               <div className="form-control">
                 <label className="label py-1" htmlFor="jobDescription">
@@ -392,11 +530,26 @@ export default function ApplicationForm() {
         </form>
 
         {outputs && (
-          <GeneratedOutputs
-            outputs={outputs}
-            company={form.company}
-            jobTitle={form.jobTitle}
-          />
+          <>
+            {savedApplicationId && (
+              <div className="alert alert-success mt-6 border border-success/30">
+                <span className="text-sm">
+                  Saved to your applications.{" "}
+                  <Link
+                    href={`/applications/${savedApplicationId}`}
+                    className="link link-primary font-medium"
+                  >
+                    View application
+                  </Link>
+                </span>
+              </div>
+            )}
+            <GeneratedOutputs
+              outputs={outputs}
+              company={form.company}
+              jobTitle={form.jobTitle}
+            />
+          </>
         )}
       </div>
     </section>

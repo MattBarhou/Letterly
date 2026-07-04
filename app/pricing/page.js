@@ -30,9 +30,9 @@ export default function PricingPage() {
               Cover letter generator plans for every job search
             </h1>
             <p className="text-base-content/80 max-w-xl mx-auto">
-              Start with 3 free cover letter generations and 3 ZIP exports.
-              Upgrade when you&apos;re applying to internships and new grad roles
-              in earnest — cancel anytime.
+              Start with 3 free generations and 3 ZIP exports. Upgrade for
+              unlimited history, job URL import, application tracking, and
+              Premium interview prep — cancel anytime.
             </p>
           </div>
 

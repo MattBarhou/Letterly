@@ -5,6 +5,7 @@ import {
   formatCompanyResearchForPrompt,
   getCompanyResearch,
 } from "@/lib/companyResearch";
+import { createApplication, upsertUserProfile } from "@/lib/applications";
 import { callOpenAI } from "@/lib/openai";
 import { buildApplicationPrompt } from "@/lib/prompts";
 import { checkGenerateRateLimit, getRateLimitErrorMessage } from "@/lib/rateLimit";
@@ -13,6 +14,7 @@ import {
   getUsageLimitMessage,
   incrementUsage,
 } from "@/lib/usage";
+import { isSupabaseConfigured } from "@/lib/supabase";
 
 const REQUIRED_FIELDS = [
   "resume",
@@ -137,7 +139,7 @@ export async function POST(request) {
       return NextResponse.json({ error: validationError }, { status: 400 });
     }
 
-    const { resume, jobDescription, company, jobTitle, yearsExperience, tone } =
+    const { resume, jobDescription, company, jobTitle, yearsExperience, tone, jobUrl } =
       body;
 
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -169,10 +171,37 @@ export async function POST(request) {
 
     await incrementUsage(userId);
 
+    let applicationId = null;
+
+    if (isSupabaseConfigured()) {
+      try {
+        await upsertUserProfile(userId, {
+          resumeText: resume,
+          defaultTone: tone,
+          defaultYearsExperience: yearsExperience,
+        });
+
+        const saved = await createApplication(userId, {
+          company,
+          jobTitle,
+          jobDescription,
+          jobUrl,
+          tone,
+          yearsExperience,
+          outputs: result,
+        });
+
+        applicationId = saved?.id ?? null;
+      } catch (saveError) {
+        console.error("Failed to save application:", saveError);
+      }
+    }
+
     const updatedUsage = await canGenerate(userId);
 
     return NextResponse.json({
       ...result,
+      applicationId,
       usage: updatedUsage,
     });
   } catch (error) {

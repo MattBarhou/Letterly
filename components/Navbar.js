@@ -40,6 +40,9 @@ export default function Navbar() {
           </SignUpButton>
         </Show>
         <Show when="signed-in">
+          <Link href="/applications" className="btn btn-ghost btn-sm">
+            Applications
+          </Link>
           <Link href="/#generate" className="btn btn-primary btn-sm">
             Generate
           </Link>
@@ -57,6 +60,9 @@ export default function Navbar() {
           </SignUpButton>
         </Show>
         <Show when="signed-in">
+          <Link href="/applications" className="btn btn-ghost btn-sm">
+            Apps
+          </Link>
           <Link href="/#generate" className="btn btn-primary btn-sm">
             Generate
           </Link>
