@@ -1,11 +1,11 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { buildApplicationZip } from "@/lib/exportZip";
-import { getSubscription } from "@/lib/subscription";
+import { canExportZip, getExportLimitMessage, incrementExportUsage } from "@/lib/usage";
 
 const OUTPUT_FIELDS = [
-  "coverLetter250",
-  "coverLetter400",
+  "coverLetterBasic",
+  "coverLetterDetailed",
   "recruiterEmail",
   "linkedinMessage",
   "atsVersion",
@@ -21,13 +21,10 @@ export async function POST(request) {
     );
   }
 
-  const subscription = await getSubscription(userId);
-  const tier =
-    subscription.status === "active" ? subscription.tier : "free";
-
-  if (tier !== "premium") {
+  const exportCheck = await canExportZip(userId);
+  if (!exportCheck.allowed) {
     return NextResponse.json(
-      { error: "ZIP export is available on the Premium plan." },
+      { error: getExportLimitMessage(exportCheck) },
       { status: 403 }
     );
   }
@@ -62,6 +59,8 @@ export async function POST(request) {
       jobTitle: jobTitle.trim(),
       outputs,
     });
+
+    await incrementExportUsage(userId);
 
     return new Response(zipBuffer, {
       status: 200,

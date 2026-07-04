@@ -13,10 +13,6 @@ import {
   getUsageLimitMessage,
   incrementUsage,
 } from "@/lib/usage";
-import {
-  buildWordCountRevisionPrompt,
-  getCoverLetterWordCountIssues,
-} from "@/lib/wordCount";
 
 const REQUIRED_FIELDS = [
   "resume",
@@ -28,8 +24,8 @@ const REQUIRED_FIELDS = [
 ];
 
 const OUTPUT_FIELDS = [
-  "coverLetter250",
-  "coverLetter400",
+  "coverLetterBasic",
+  "coverLetterDetailed",
   "recruiterEmail",
   "linkedinMessage",
   "atsVersion",
@@ -68,8 +64,8 @@ function parseGeneratedContent(content) {
   }
 
   return {
-    coverLetter250: parsed.coverLetter250,
-    coverLetter400: parsed.coverLetter400,
+    coverLetterBasic: parsed.coverLetterBasic,
+    coverLetterDetailed: parsed.coverLetterDetailed,
     recruiterEmail: parsed.recruiterEmail,
     linkedinMessage: parsed.linkedinMessage,
     atsVersion: parsed.atsVersion,
@@ -87,38 +83,6 @@ function getOpenAIErrorMessage(error) {
     return "OpenAI access denied for this API key. Verify the key is active and has permission to use the API.";
   }
   return error.message || "OpenAI request failed. Please try again later.";
-}
-
-async function reviseCoverLetterWordCounts(openai, result) {
-  const issues = getCoverLetterWordCountIssues(result);
-  if (issues.length === 0) {
-    return result;
-  }
-
-  const content = await callOpenAI(openai, [
-    {
-      role: "system",
-      content:
-        "You fix cover letter word counts precisely while preserving the business letter header format with bracket placeholders. Always respond with valid JSON only.",
-    },
-    {
-      role: "user",
-      content: buildWordCountRevisionPrompt(result, issues),
-    },
-  ]);
-
-  let revised;
-  try {
-    revised = JSON.parse(content);
-  } catch {
-    return result;
-  }
-
-  return {
-    ...result,
-    coverLetter250: revised.coverLetter250 || result.coverLetter250,
-    coverLetter400: revised.coverLetter400 || result.coverLetter400,
-  };
 }
 
 export async function POST(request) {
@@ -185,7 +149,7 @@ export async function POST(request) {
       {
         role: "system",
         content:
-          "You are a helpful career assistant for early-career software engineers. Always respond with valid JSON only. Cover letters must use standard business letter format with bracket placeholders in the header. Cover letter word counts are strict requirements.",
+          "You are a helpful career assistant for early-career software engineers. Always respond with valid JSON only. Cover letters must use standard business letter format with bracket placeholders in the header.",
       },
       {
         role: "user",
@@ -201,15 +165,7 @@ export async function POST(request) {
       },
     ]);
 
-    let result = parseGeneratedContent(content);
-
-    for (let attempt = 0; attempt < 2; attempt++) {
-      const issues = getCoverLetterWordCountIssues(result);
-      if (issues.length === 0) {
-        break;
-      }
-      result = await reviseCoverLetterWordCounts(openai, result);
-    }
+    const result = parseGeneratedContent(content);
 
     await incrementUsage(userId);
 

@@ -20,14 +20,14 @@ export const metadata = createPageMetadata({
 const OUTPUTS = [
   {
     index: "01",
-    label: "Cover letter",
-    format: "250 words",
-    description: "Short cover letter for application portals with strict word limits.",
+    label: "Basic cover letter",
+    format: "Concise",
+    description: "Short cover letter for application portals and quick submissions.",
   },
   {
     index: "02",
-    label: "Cover letter",
-    format: "400 words",
+    label: "Detailed cover letter",
+    format: "Extended",
     description: "Longer cover letter when recruiters expect more context.",
   },
   {
@@ -154,7 +154,7 @@ export default function Home() {
                   <span className="text-success font-bold" aria-hidden="true">
                     ✓
                   </span>
-                  3 free generations
+                  3 free generations & ZIP exports
                 </span>
                 <span className="flex items-center gap-1.5">
                   <span className="text-success font-bold" aria-hidden="true">

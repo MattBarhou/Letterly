@@ -43,7 +43,7 @@ export default function UsageBanner({ refreshKey = 0 }) {
               Sign in
             </button>
           </SignInButton>{" "}
-          to get 3 free generations, then{" "}
+          to get 3 free generations and 3 ZIP exports, then{" "}
           <Link href="/pricing" className="link link-primary font-medium">
             choose a plan
           </Link>{" "}
@@ -80,6 +80,16 @@ export default function UsageBanner({ refreshKey = 0 }) {
             {usage.remaining} of {usage.limit}
           </span>{" "}
           generations {usage.lifetime ? "remaining" : "left this month"}
+          {usage.tier === "free" && usage.exportLimit != null && (
+            <>
+              {" "}
+              ·{" "}
+              <span className="font-medium">
+                {usage.exportRemaining} of {usage.exportLimit}
+              </span>{" "}
+              ZIP exports remaining
+            </>
+          )}
         </span>
         {usage.remaining === 0 ? (
           <Link href="/pricing" className="btn btn-primary btn-xs sm:btn-sm">

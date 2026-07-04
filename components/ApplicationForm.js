@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import GeneratedOutputs from "@/components/GeneratedOutputs";
 import ResumeUpload from "@/components/ResumeUpload";
 import UsageBanner from "@/components/UsageBanner";
@@ -14,6 +14,9 @@ const INITIAL_FORM = {
   tone: "Professional",
 };
 
+const COMPANY_PREFETCH_DELAY_MS = 600;
+const MIN_COMPANY_LENGTH = 2;
+
 export default function ApplicationForm() {
   const [form, setForm] = useState(INITIAL_FORM);
   const [errors, setErrors] = useState({});
@@ -21,6 +24,41 @@ export default function ApplicationForm() {
   const [outputs, setOutputs] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [usageRefreshKey, setUsageRefreshKey] = useState(0);
+  const prefetchTimeoutRef = useRef(null);
+  const lastPrefetchedCompanyRef = useRef("");
+
+  function prefetchCompanyResearch(company) {
+    const trimmed = company.trim();
+    if (trimmed.length < MIN_COMPANY_LENGTH || trimmed === lastPrefetchedCompanyRef.current) {
+      return;
+    }
+
+    lastPrefetchedCompanyRef.current = trimmed;
+
+    fetch("/api/company-research", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ company: trimmed }),
+    }).catch(() => {});
+  }
+
+  useEffect(() => {
+    const company = form.company.trim();
+
+    if (company.length < MIN_COMPANY_LENGTH) {
+      lastPrefetchedCompanyRef.current = "";
+      return;
+    }
+
+    clearTimeout(prefetchTimeoutRef.current);
+    prefetchTimeoutRef.current = setTimeout(() => {
+      prefetchCompanyResearch(company);
+    }, COMPANY_PREFETCH_DELAY_MS);
+
+    return () => {
+      clearTimeout(prefetchTimeoutRef.current);
+    };
+  }, [form.company]);
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -28,6 +66,11 @@ export default function ApplicationForm() {
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
+  }
+
+  function handleCompanyBlur() {
+    clearTimeout(prefetchTimeoutRef.current);
+    prefetchCompanyResearch(form.company);
   }
 
   function validate() {
@@ -214,6 +257,7 @@ export default function ApplicationForm() {
                     placeholder="e.g. Shopify, Google, Wealthsimple"
                     value={form.company}
                     onChange={handleChange}
+                    onBlur={handleCompanyBlur}
                     disabled={isGenerating}
                   />
                   {errors.company && (
@@ -333,7 +377,7 @@ export default function ApplicationForm() {
               <div className="alert alert-info mt-2">
                 <span className="loading loading-spinner loading-sm" />
                 <span>
-                  This usually takes 20–40 seconds. Hang tight while we tailor
+                  This usually takes 15–30 seconds. Hang tight while we tailor
                   your content.
                 </span>
               </div>

@@ -1,20 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { countWords } from "@/lib/wordCount";
 
 const OUTPUT_SECTIONS = [
   {
-    key: "coverLetter250",
-    label: "Cover letter",
-    detail: "250 words",
+    key: "coverLetterBasic",
+    label: "Basic cover letter",
+    detail: "Concise",
     description: "Short form for application portals",
   },
   {
-    key: "coverLetter400",
-    label: "Cover letter",
-    detail: "400 words",
-    description: "Extended version with more context",
+    key: "coverLetterDetailed",
+    label: "Detailed cover letter",
+    detail: "Extended",
+    description: "More depth and context for the role",
   },
   {
     key: "recruiterEmail",
@@ -123,9 +122,24 @@ function CopyButton({ copied, onClick }) {
 export default function GeneratedOutputs({ outputs, company, jobTitle }) {
   const [activeTab, setActiveTab] = useState(OUTPUT_SECTIONS[0].key);
   const [copiedKey, setCopiedKey] = useState(null);
-  const [canExportZip, setCanExportZip] = useState(false);
+  const [usage, setUsage] = useState(null);
   const [isExporting, setIsExporting] = useState(false);
   const [exportError, setExportError] = useState("");
+
+  const canExportZip = usage?.canExportZip === true;
+  const exportRemaining = usage?.exportRemaining;
+
+  async function fetchUsage() {
+    try {
+      const response = await fetch("/api/usage");
+      if (response.ok) {
+        const data = await response.json();
+        setUsage(data);
+      }
+    } catch {
+      setUsage(null);
+    }
+  }
 
   useEffect(() => {
     setActiveTab(OUTPUT_SECTIONS[0].key);
@@ -134,25 +148,11 @@ export default function GeneratedOutputs({ outputs, company, jobTitle }) {
   }, [outputs]);
 
   useEffect(() => {
-    let cancelled = false;
-
-    fetch("/api/usage")
-      .then((response) => (response.ok ? response.json() : null))
-      .then((data) => {
-        if (!cancelled && data) {
-          setCanExportZip(data.canExportZip === true);
-        }
-      })
-      .catch(() => {});
-
-    return () => {
-      cancelled = true;
-    };
+    fetchUsage();
   }, [outputs]);
 
   const activeSection = OUTPUT_SECTIONS.find((s) => s.key === activeTab);
   const activeText = outputs[activeTab];
-  const wordCount = countWords(activeText);
   const charCount = activeText.length;
   const isCopied = copiedKey === activeTab;
 
@@ -193,6 +193,7 @@ export default function GeneratedOutputs({ outputs, company, jobTitle }) {
       link.download = filename;
       link.click();
       URL.revokeObjectURL(url);
+      await fetchUsage();
     } catch {
       setExportError("Network error. Check your connection and try again.");
     } finally {
@@ -225,8 +226,21 @@ export default function GeneratedOutputs({ outputs, company, jobTitle }) {
                 ) : (
                   <DownloadIcon />
                 )}
-                <span>{isExporting ? "Exporting…" : "Download ZIP"}</span>
+                <span>
+                  {isExporting
+                    ? "Exporting…"
+                    : exportRemaining != null
+                      ? `Download ZIP (${exportRemaining} left)`
+                      : "Download ZIP"}
+                </span>
               </button>
+            ) : usage?.tier === "free" ? (
+              <a
+                href="/pricing"
+                className="text-xs text-base-content/50 hover:text-primary transition-colors"
+              >
+                No ZIP exports left
+              </a>
             ) : (
               <a
                 href="/pricing"
@@ -311,14 +325,11 @@ export default function GeneratedOutputs({ outputs, company, jobTitle }) {
               </div>
             </div>
 
-            <div className="px-5 sm:px-6 py-2.5 border-t border-base-300 flex items-center justify-between text-[11px] text-base-content/35 tabular-nums">
-              <span>
-                {activeTab === "linkedinMessage"
-                  ? `${charCount} characters`
-                  : `${wordCount} words`}
-              </span>
-              <span>{activeSection.detail}</span>
-            </div>
+            {activeTab === "linkedinMessage" && (
+              <div className="px-5 sm:px-6 py-2.5 border-t border-base-300 flex items-center justify-end text-[11px] text-base-content/35 tabular-nums">
+                <span>{charCount} characters</span>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -11,7 +11,12 @@ const PLANS = [
     priceAnnual: 0,
     limit: "3 generations",
     limitDetail: "lifetime",
-    features: ["All 5 output types", "PDF resume upload", "Company research"],
+    features: [
+      "All 5 output types",
+      "PDF resume upload",
+      "Company research",
+      "3 ZIP exports (PDF cover letters)",
+    ],
     cta: "Get started free",
     priceId: null,
     highlighted: false,
@@ -40,7 +45,7 @@ const PLANS = [
     limitDetail: "per month",
     features: [
       "Everything in Starter",
-      "ZIP export (PDF cover letters)",
+      "Unlimited ZIP exports (PDF cover letters)",
       "For recruiting season",
     ],
     cta: "Subscribe",
