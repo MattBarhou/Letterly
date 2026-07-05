@@ -5,6 +5,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  serverExternalPackages: ["pdfkit"],
   turbopack: {
     root: __dirname,
   },

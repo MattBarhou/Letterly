@@ -52,6 +52,35 @@ function EmailMaterial({ content }) {
   );
 }
 
+function StarOutlineContent({ outline }) {
+  if (typeof outline === "string") {
+    return (
+      <p className="whitespace-pre-wrap text-sm text-base-content/80">
+        {outline}
+      </p>
+    );
+  }
+
+  if (outline && typeof outline === "object") {
+    const starKeys = ["Situation", "Task", "Action", "Result"];
+
+    return (
+      <div className="space-y-2 text-sm text-base-content/80">
+        {starKeys.map((key) =>
+          outline[key] ? (
+            <p key={key}>
+              <span className="font-medium">{key}: </span>
+              {outline[key]}
+            </p>
+          ) : null
+        )}
+      </div>
+    );
+  }
+
+  return null;
+}
+
 function InterviewPrepMaterial({ content }) {
   return (
     <div className="space-y-6">
@@ -82,9 +111,7 @@ function InterviewPrepMaterial({ content }) {
               className="rounded-lg border border-base-300 p-4 bg-base-200/40"
             >
               <p className="font-medium text-sm mb-2">{item.question}</p>
-              <p className="whitespace-pre-wrap text-sm text-base-content/80">
-                {item.outline}
-              </p>
+              <StarOutlineContent outline={item.outline} />
             </div>
           ))}
         </div>
