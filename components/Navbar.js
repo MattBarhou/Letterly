@@ -43,6 +43,9 @@ export default function Navbar() {
           <Link href="/applications" className="btn btn-ghost btn-sm">
             Applications
           </Link>
+          <Link href="/resume" className="btn btn-ghost btn-sm">
+            Resume
+          </Link>
           <Link href="/#generate" className="btn btn-primary btn-sm">
             Generate
           </Link>
@@ -62,6 +65,9 @@ export default function Navbar() {
         <Show when="signed-in">
           <Link href="/applications" className="btn btn-ghost btn-sm">
             Apps
+          </Link>
+          <Link href="/resume" className="btn btn-ghost btn-sm">
+            Resume
           </Link>
           <Link href="/#generate" className="btn btn-primary btn-sm">
             Generate
