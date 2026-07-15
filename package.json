@@ -32,6 +32,7 @@
   },
   "optionalDependencies": {
     "@next/swc-darwin-x64": "^16.2.9",
+    "@tailwindcss/oxide-darwin-x64": "^4.3.1",
     "lightningcss-darwin-x64": "^1.32.0"
   }
 }
