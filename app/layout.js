@@ -1,5 +1,6 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import { DEFAULT_DESCRIPTION, DEFAULT_KEYWORDS, SITE_NAME, getSiteUrl } from "@/lib/seo";
@@ -93,6 +94,7 @@ fbq('track', 'PageView');
           </noscript>
           {children}
           <Analytics />
+          <SpeedInsights />
         </body>
       </html>
     </ClerkProvider>
