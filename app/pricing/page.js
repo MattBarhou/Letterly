@@ -5,12 +5,12 @@ import { createPageMetadata } from "@/lib/seo";
 export const metadata = createPageMetadata({
   title: "Pricing — Cover Letter Generator Plans",
   description:
-    "Simple pricing for AI cover letter generation. Start with 3 free generations and 3 ZIP exports, then choose Starter or Premium for internships, co-ops, and new grad tech job applications.",
+    "Simple pricing for AI job application documents. Start with 3 free generations and 3 ZIP exports — no credit card required. Then choose Starter or Premium for unlimited history, tracking, and interview prep.",
   path: "/pricing",
   keywords: [
     "cover letter generator pricing",
     "AI cover letter cost",
-    "internship application tools",
+    "job application tools pricing",
     "Letterly pricing",
   ],
 });
@@ -27,12 +27,12 @@ export default function PricingPage() {
               Pricing
             </p>
             <h1 className="text-3xl sm:text-4xl font-bold mb-3">
-              Cover letter generator plans for every job search
+              Plans for every job search
             </h1>
             <p className="text-base-content/80 max-w-xl mx-auto">
-              Start with 3 free generations and 3 ZIP exports. Upgrade for
-              unlimited history, job URL import, application tracking, and
-              Premium interview prep — cancel anytime.
+              Start with 3 free generations and 3 ZIP exports — no credit card
+              required. Upgrade for unlimited history, job URL import,
+              application tracking, and Premium interview prep. Cancel anytime.
             </p>
           </div>
 

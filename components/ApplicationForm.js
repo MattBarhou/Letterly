@@ -26,6 +26,8 @@ export default function ApplicationForm() {
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState("");
   const [outputs, setOutputs] = useState(null);
+  const [resolvedCompany, setResolvedCompany] = useState("");
+  const [resolvedJobTitle, setResolvedJobTitle] = useState("");
   const [savedApplicationId, setSavedApplicationId] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isImportingJob, setIsImportingJob] = useState(false);
@@ -121,12 +123,6 @@ export default function ApplicationForm() {
     if (!form.jobDescription.trim()) {
       newErrors.jobDescription = "Please paste the job description.";
     }
-    if (!form.company.trim()) {
-      newErrors.company = "Company name is required.";
-    }
-    if (!form.jobTitle.trim()) {
-      newErrors.jobTitle = "Job title is required.";
-    }
     return newErrors;
   }
 
@@ -212,6 +208,16 @@ export default function ApplicationForm() {
         return;
       }
 
+      const nextCompany = data.company || form.company;
+      const nextJobTitle = data.jobTitle || form.jobTitle;
+
+      setResolvedCompany(nextCompany);
+      setResolvedJobTitle(nextJobTitle);
+      setForm((prev) => ({
+        ...prev,
+        company: prev.company.trim() ? prev.company : nextCompany,
+        jobTitle: prev.jobTitle.trim() ? prev.jobTitle : nextJobTitle,
+      }));
       setOutputs(data);
       setSavedApplicationId(data.applicationId || null);
       setUsageRefreshKey((key) => key + 1);
@@ -235,11 +241,11 @@ export default function ApplicationForm() {
             Get started
           </p>
           <h2 className="text-3xl font-bold mb-2">
-            Generate your application materials
+            Generate your first application
           </h2>
           <p className="text-base-content/85 max-w-lg mx-auto">
-            Upload your resume PDF or paste the text, then add the job posting.
-            The more detail you provide, the better the results.
+            Upload your resume, paste the job posting, and get five tailored
+            documents — company and role are detected automatically.
           </p>
         </div>
 
@@ -250,14 +256,12 @@ export default function ApplicationForm() {
           <div className="card-body gap-2">
             <UsageBanner refreshKey={usageRefreshKey} />
 
-            {/* Section: Your background */}
             <div className="pb-2">
               <h3 className="font-semibold text-base text-base-content mb-1">
-                Your background
+                1. Upload resume
               </h3>
               <p className="text-sm text-base-content/80 mb-4">
-                Include education, projects, skills, internships, and any work
-                experience.
+                PDF or paste — built from your experience, not generic AI fluff.
               </p>
 
               <ResumeUpload
@@ -282,73 +286,13 @@ export default function ApplicationForm() {
 
             <div className="divider my-2" />
 
-            {/* Section: The role */}
             <div className="pb-2">
               <h3 className="font-semibold text-base text-base-content mb-1">
-                The role
+                2. Paste job description
               </h3>
               <p className="text-sm text-base-content/80 mb-4">
-                Copy the full job posting from LinkedIn, the company careers
-                page, or WaterlooWorks — or import from a URL on Starter and
-                Premium plans.
+                Copy the full posting from LinkedIn, Indeed, or a careers page.
               </p>
-
-              <div className="form-control mb-4">
-                <label className="label py-1" htmlFor="jobUrl">
-                  <span className="label-text font-semibold text-base-content">
-                    Job posting URL
-                  </span>
-                  <span className="text-xs text-base-content/50">Optional</span>
-                </label>
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <input
-                    id="jobUrl"
-                    name="jobUrl"
-                    type="url"
-                    className="input input-bordered w-full text-base-content placeholder:text-base-content/45 focus:input-primary"
-                    placeholder="https://jobs.lever.co/company/role-id"
-                    value={form.jobUrl}
-                    onChange={handleChange}
-                    disabled={isGenerating || isImportingJob}
-                  />
-                  <button
-                    type="button"
-                    className="btn btn-outline btn-primary sm:shrink-0"
-                    onClick={handleImportJob}
-                    disabled={
-                      isGenerating ||
-                      isImportingJob ||
-                      !features?.jobUrlImport
-                    }
-                  >
-                    {isImportingJob ? (
-                      <>
-                        <span className="loading loading-spinner loading-sm" />
-                        Importing…
-                      </>
-                    ) : (
-                      "Import"
-                    )}
-                  </button>
-                </div>
-                {!features?.jobUrlImport && isSignedIn && (
-                  <label className="label py-1">
-                    <span className="text-xs text-base-content/50">
-                      Job URL import is available on Starter and Premium.{" "}
-                      <Link href="/pricing" className="link link-primary">
-                        Upgrade
-                      </Link>
-                    </span>
-                  </label>
-                )}
-                {importError && (
-                  <label className="label py-1">
-                    <span className="text-sm font-medium text-error">
-                      {importError}
-                    </span>
-                  </label>
-                )}
-              </div>
 
               <div className="form-control">
                 <label className="label py-1" htmlFor="jobDescription">
@@ -363,7 +307,7 @@ export default function ApplicationForm() {
                   id="jobDescription"
                   name="jobDescription"
                   className={`textarea textarea-bordered h-40 w-full text-base-content placeholder:text-base-content/45 focus:textarea-primary ${errors.jobDescription ? "textarea-error" : ""}`}
-                  placeholder={`Example:\n\nSoftware Engineer Intern — Shopify\n\nWe're looking for a motivated intern to join our Backend team in Toronto.\n\nRequirements:\n- Currently enrolled in a CS or related program\n- Experience with Ruby, Python, or Go\n- Familiarity with REST APIs and databases\n\nNice to have: Open source contributions, prior internship experience`}
+                  placeholder={`Example:\n\nMarketing Coordinator — BrightPath\n\nWe're looking for a motivated coordinator to join our growth team.\n\nRequirements:\n- Strong written communication\n- Experience with social media or email campaigns\n- Comfortable managing multiple deadlines`}
                   value={form.jobDescription}
                   onChange={handleChange}
                   disabled={isGenerating}
@@ -375,124 +319,165 @@ export default function ApplicationForm() {
                     </span>
                   </label>
                 )}
+                <p className="text-xs text-base-content/50 mt-2">
+                  Company and job title are detected automatically from the
+                  posting. Override them in Advanced options if needed.
+                </p>
               </div>
+            </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+            <details className="collapse collapse-arrow border border-base-300 rounded-xl bg-base-200/40 mt-2">
+              <summary className="collapse-title min-h-0 py-3 text-sm font-medium text-base-content/80">
+                Advanced options
+              </summary>
+              <div className="collapse-content space-y-4 pt-0">
                 <div className="form-control">
-                  <label className="label py-1" htmlFor="company">
+                  <label className="label py-1" htmlFor="jobUrl">
                     <span className="label-text font-semibold text-base-content">
-                      Company name
+                      Job posting URL
                     </span>
-                    <span className="text-xs font-semibold text-error">
-                      Required
-                    </span>
+                    <span className="text-xs text-base-content/50">Optional</span>
                   </label>
-                  <input
-                    id="company"
-                    name="company"
-                    type="text"
-                    className={`input input-bordered w-full text-base-content placeholder:text-base-content/45 focus:input-primary ${errors.company ? "input-error" : ""}`}
-                    placeholder="e.g. Shopify, Google, Wealthsimple"
-                    value={form.company}
-                    onChange={handleChange}
-                    onBlur={handleCompanyBlur}
-                    disabled={isGenerating}
-                  />
-                  {errors.company && (
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <input
+                      id="jobUrl"
+                      name="jobUrl"
+                      type="url"
+                      className="input input-bordered w-full text-base-content placeholder:text-base-content/45 focus:input-primary"
+                      placeholder="https://jobs.lever.co/company/role-id"
+                      value={form.jobUrl}
+                      onChange={handleChange}
+                      disabled={isGenerating || isImportingJob}
+                    />
+                    <button
+                      type="button"
+                      className="btn btn-outline btn-primary sm:shrink-0"
+                      onClick={handleImportJob}
+                      disabled={
+                        isGenerating ||
+                        isImportingJob ||
+                        !features?.jobUrlImport
+                      }
+                    >
+                      {isImportingJob ? (
+                        <>
+                          <span className="loading loading-spinner loading-sm" />
+                          Importing…
+                        </>
+                      ) : (
+                        "Import"
+                      )}
+                    </button>
+                  </div>
+                  {!features?.jobUrlImport && isSignedIn && (
+                    <label className="label py-1">
+                      <span className="text-xs text-base-content/50">
+                        Job URL import is available on Starter and Premium.{" "}
+                        <Link href="/pricing" className="link link-primary">
+                          Upgrade
+                        </Link>
+                      </span>
+                    </label>
+                  )}
+                  {importError && (
                     <label className="label py-1">
                       <span className="text-sm font-medium text-error">
-                        {errors.company}
+                        {importError}
                       </span>
                     </label>
                   )}
                 </div>
 
-                <div className="form-control">
-                  <label className="label py-1" htmlFor="jobTitle">
-                    <span className="label-text font-semibold text-base-content">
-                      Job title
-                    </span>
-                    <span className="text-xs font-semibold text-error">
-                      Required
-                    </span>
-                  </label>
-                  <input
-                    id="jobTitle"
-                    name="jobTitle"
-                    type="text"
-                    className={`input input-bordered w-full text-base-content placeholder:text-base-content/45 focus:input-primary ${errors.jobTitle ? "input-error" : ""}`}
-                    placeholder="e.g. Software Engineer Intern, New Grad SWE"
-                    value={form.jobTitle}
-                    onChange={handleChange}
-                    disabled={isGenerating}
-                  />
-                  {errors.jobTitle && (
-                    <label className="label py-1">
-                      <span className="text-sm font-medium text-error">
-                        {errors.jobTitle}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="form-control">
+                    <label className="label py-1" htmlFor="company">
+                      <span className="label-text font-semibold text-base-content">
+                        Company name
+                      </span>
+                      <span className="text-xs text-base-content/50">
+                        Optional
                       </span>
                     </label>
-                  )}
+                    <input
+                      id="company"
+                      name="company"
+                      type="text"
+                      className="input input-bordered w-full text-base-content placeholder:text-base-content/45 focus:input-primary"
+                      placeholder="Auto-detected if left blank"
+                      value={form.company}
+                      onChange={handleChange}
+                      onBlur={handleCompanyBlur}
+                      disabled={isGenerating}
+                    />
+                  </div>
+
+                  <div className="form-control">
+                    <label className="label py-1" htmlFor="jobTitle">
+                      <span className="label-text font-semibold text-base-content">
+                        Job title
+                      </span>
+                      <span className="text-xs text-base-content/50">
+                        Optional
+                      </span>
+                    </label>
+                    <input
+                      id="jobTitle"
+                      name="jobTitle"
+                      type="text"
+                      className="input input-bordered w-full text-base-content placeholder:text-base-content/45 focus:input-primary"
+                      placeholder="Auto-detected if left blank"
+                      value={form.jobTitle}
+                      onChange={handleChange}
+                      disabled={isGenerating}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="form-control">
+                    <label className="label py-1" htmlFor="yearsExperience">
+                      <span className="label-text font-semibold text-base-content">
+                        Years of experience
+                      </span>
+                    </label>
+                    <select
+                      id="yearsExperience"
+                      name="yearsExperience"
+                      className="select select-bordered w-full text-base-content focus:select-primary"
+                      value={form.yearsExperience}
+                      onChange={handleChange}
+                      disabled={isGenerating}
+                    >
+                      <option value="0">0 — Student / New grad</option>
+                      <option value="1">1 year</option>
+                      <option value="2">2 years</option>
+                      <option value="3+">3+ years</option>
+                    </select>
+                  </div>
+
+                  <div className="form-control">
+                    <label className="label py-1" htmlFor="tone">
+                      <span className="label-text font-semibold text-base-content">
+                        Tone
+                      </span>
+                    </label>
+                    <select
+                      id="tone"
+                      name="tone"
+                      className="select select-bordered w-full text-base-content focus:select-primary"
+                      value={form.tone}
+                      onChange={handleChange}
+                      disabled={isGenerating}
+                    >
+                      <option value="Professional">Professional</option>
+                      <option value="Big Tech">Big Tech</option>
+                      <option value="Startup">Startup</option>
+                      <option value="Internship">Internship</option>
+                    </select>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div className="divider my-2" />
-
-            {/* Section: Preferences */}
-            <div className="pb-2">
-              <h3 className="font-semibold text-base text-base-content mb-1">
-                Preferences
-              </h3>
-              <p className="text-sm text-base-content/80 mb-4">
-                Match the tone to the company culture — Big Tech for FAANG-style
-                apps, Startup for early-stage companies.
-              </p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="form-control">
-                  <label className="label py-1" htmlFor="yearsExperience">
-                    <span className="label-text font-semibold text-base-content">
-                      Years of experience
-                    </span>
-                  </label>
-                  <select
-                    id="yearsExperience"
-                    name="yearsExperience"
-                    className="select select-bordered w-full text-base-content focus:select-primary"
-                    value={form.yearsExperience}
-                    onChange={handleChange}
-                    disabled={isGenerating}
-                  >
-                    <option value="0">0 — Student / New grad</option>
-                    <option value="1">1 year</option>
-                    <option value="2">2 years</option>
-                    <option value="3+">3+ years</option>
-                  </select>
-                </div>
-
-                <div className="form-control">
-                  <label className="label py-1" htmlFor="tone">
-                    <span className="label-text font-semibold text-base-content">
-                      Tone
-                    </span>
-                  </label>
-                  <select
-                    id="tone"
-                    name="tone"
-                    className="select select-bordered w-full text-base-content focus:select-primary"
-                    value={form.tone}
-                    onChange={handleChange}
-                    disabled={isGenerating}
-                  >
-                    <option value="Professional">Professional</option>
-                    <option value="Big Tech">Big Tech</option>
-                    <option value="Startup">Startup</option>
-                    <option value="Internship">Internship</option>
-                  </select>
-                </div>
-              </div>
-            </div>
+            </details>
 
             <div className="card-actions justify-end pt-4">
               <button
@@ -506,7 +491,7 @@ export default function ApplicationForm() {
                     Generating your materials…
                   </>
                 ) : (
-                  "Generate Application Materials"
+                  "Generate My Application"
                 )}
               </button>
             </div>
@@ -515,8 +500,8 @@ export default function ApplicationForm() {
               <div className="alert alert-info mt-2">
                 <span className="loading loading-spinner loading-sm" />
                 <span>
-                  This usually takes 15–30 seconds. Hang tight while we tailor
-                  your content.
+                  Detecting the role and writing your documents — usually 15–30
+                  seconds.
                 </span>
               </div>
             )}
@@ -546,8 +531,8 @@ export default function ApplicationForm() {
             )}
             <GeneratedOutputs
               outputs={outputs}
-              company={form.company}
-              jobTitle={form.jobTitle}
+              company={resolvedCompany || form.company}
+              jobTitle={resolvedJobTitle || form.jobTitle}
             />
           </>
         )}

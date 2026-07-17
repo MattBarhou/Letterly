@@ -5,7 +5,7 @@ import { createPageMetadata } from "@/lib/seo";
 export const metadata = createPageMetadata({
   title: "Resume Optimizer — Letterly",
   description:
-    "Improve your resume Projects bullet points with AI. Get stronger action verbs, metric placeholders, and actionable recommendations for early-career tech roles.",
+    "Improve your resume project bullet points with AI. Get stronger action verbs, metric placeholders, and actionable recommendations for any career.",
   path: "/resume",
 });
 

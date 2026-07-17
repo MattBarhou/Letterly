@@ -6,6 +6,7 @@ import {
   getCompanyResearch,
 } from "@/lib/companyResearch";
 import { createApplication, upsertUserProfile } from "@/lib/applications";
+import { resolveJobFields } from "@/lib/extractJobFields";
 import { callOpenAI } from "@/lib/openai";
 import { buildApplicationPrompt } from "@/lib/prompts";
 import { checkGenerateRateLimit, getRateLimitErrorMessage } from "@/lib/rateLimit";
@@ -16,14 +17,10 @@ import {
 } from "@/lib/usage";
 import { isSupabaseConfigured } from "@/lib/supabase";
 
-const REQUIRED_FIELDS = [
-  "resume",
-  "jobDescription",
-  "company",
-  "jobTitle",
-  "yearsExperience",
-  "tone",
-];
+const REQUIRED_FIELDS = ["resume", "jobDescription"];
+
+const DEFAULT_YEARS_EXPERIENCE = "0";
+const DEFAULT_TONE = "Professional";
 
 const OUTPUT_FIELDS = [
   "coverLetterBasic",
@@ -139,19 +136,41 @@ export async function POST(request) {
       return NextResponse.json({ error: validationError }, { status: 400 });
     }
 
-    const { resume, jobDescription, company, jobTitle, yearsExperience, tone, jobUrl } =
-      body;
+    const resume = String(body.resume).trim();
+    const jobDescription = String(body.jobDescription).trim();
+    const jobUrl = typeof body.jobUrl === "string" ? body.jobUrl.trim() : "";
+    const yearsExperience =
+      typeof body.yearsExperience === "string" && body.yearsExperience.trim()
+        ? body.yearsExperience.trim()
+        : DEFAULT_YEARS_EXPERIENCE;
+    const tone =
+      typeof body.tone === "string" && body.tone.trim()
+        ? body.tone.trim()
+        : DEFAULT_TONE;
 
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-    const research = await getCompanyResearch(openai, company);
-    const companyResearch = formatCompanyResearchForPrompt(research);
+    const { company, jobTitle } = await resolveJobFields(openai, {
+      company: body.company,
+      jobTitle: body.jobTitle,
+      jobDescription,
+    });
+
+    let companyResearch = "";
+    if (company) {
+      try {
+        const research = await getCompanyResearch(openai, company);
+        companyResearch = formatCompanyResearchForPrompt(research);
+      } catch (researchError) {
+        console.error("Company research failed:", researchError);
+      }
+    }
 
     const content = await callOpenAI(openai, [
       {
         role: "system",
         content:
-          "You are a helpful career assistant for early-career software engineers. Always respond with valid JSON only. Cover letters must use standard business letter format with bracket placeholders in the header.",
+          "You are a helpful career assistant for job applicants. Always respond with valid JSON only. Cover letters must use standard business letter format with bracket placeholders in the header.",
       },
       {
         role: "user",
@@ -182,7 +201,7 @@ export async function POST(request) {
         });
 
         const saved = await createApplication(userId, {
-          company,
+          company: company || "[Company Name]",
           jobTitle,
           jobDescription,
           jobUrl,
@@ -201,6 +220,8 @@ export async function POST(request) {
 
     return NextResponse.json({
       ...result,
+      company,
+      jobTitle,
       applicationId,
       usage: updatedUsage,
     });

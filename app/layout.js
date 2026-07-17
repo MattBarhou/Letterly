@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 export const metadata = {
   metadataBase: new URL(getSiteUrl()),
   title: {
-    default: `${SITE_NAME} | AI Cover Letter Generator for Internships & Tech Jobs`,
+    default: `${SITE_NAME} | AI Job Application Documents in Under a Minute`,
     template: `%s | ${SITE_NAME}`,
   },
   description: DEFAULT_DESCRIPTION,
@@ -37,12 +37,12 @@ export const metadata = {
     type: "website",
     locale: "en_US",
     siteName: SITE_NAME,
-    title: `${SITE_NAME} | AI Cover Letter Generator for Internships & Tech Jobs`,
+    title: `${SITE_NAME} | AI Job Application Documents in Under a Minute`,
     description: DEFAULT_DESCRIPTION,
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_NAME} | AI Cover Letter Generator for Internships & Tech Jobs`,
+    title: `${SITE_NAME} | AI Job Application Documents in Under a Minute`,
     description: DEFAULT_DESCRIPTION,
   },
   robots: {

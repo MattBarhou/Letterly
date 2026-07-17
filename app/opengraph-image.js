@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { DEFAULT_DESCRIPTION, SITE_NAME } from "@/lib/seo";
 
-export const alt = `${SITE_NAME} — AI Cover Letter Generator for Internships & Tech Jobs`;
+export const alt = `${SITE_NAME} — Upload a resume, paste a job, get 5 tailored application documents`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -50,19 +50,19 @@ export default function OpenGraphImage() {
         </div>
         <div
           style={{
-            fontSize: 64,
+            fontSize: 56,
             fontWeight: 800,
             lineHeight: 1.05,
             letterSpacing: "-0.03em",
-            maxWidth: 900,
+            maxWidth: 960,
             marginBottom: 24,
           }}
         >
-          AI Cover Letter Generator for Internships & Tech Jobs
+          Upload one resume. Get 5 tailored application documents.
         </div>
         <div
           style={{
-            fontSize: 28,
+            fontSize: 26,
             lineHeight: 1.4,
             color: "#4b5563",
             maxWidth: 900,

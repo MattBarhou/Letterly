@@ -97,7 +97,7 @@ export async function POST(request, { params }) {
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
     let userPrompt;
     let systemPrompt =
-      "You help early-career software engineers with job applications. Always respond with valid JSON only.";
+      "You help job applicants with follow-ups, thank-you notes, and interview prep across any industry. Always respond with valid JSON only.";
 
     if (type === "follow_up") {
       userPrompt = buildFollowUpPrompt({
@@ -124,7 +124,7 @@ export async function POST(request, { params }) {
         companyResearch,
       });
       systemPrompt =
-        "You create interview prep for early-career software engineers. Use only resume facts in STAR outlines. Always respond with valid JSON only.";
+        "You create interview prep for job candidates in any industry. Use only resume facts in STAR outlines. Always respond with valid JSON only.";
     }
 
     const content = await callOpenAI(openai, [

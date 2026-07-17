@@ -21,9 +21,6 @@ export default function Navbar() {
         <Link href="/#how-it-works" className="btn btn-ghost btn-sm">
           How it works
         </Link>
-        <Link href="/#features" className="btn btn-ghost btn-sm">
-          Features
-        </Link>
         <Link href="/pricing" className="btn btn-ghost btn-sm">
           Pricing
         </Link>
@@ -79,9 +76,6 @@ export default function Navbar() {
             <ul className="menu dropdown-content z-[1] mt-3 w-64 rounded-box bg-base-100 p-2 shadow-xl border border-base-300">
               <li>
                 <Link href="/#how-it-works">How it works</Link>
-              </li>
-              <li>
-                <Link href="/#features">Features</Link>
               </li>
               <li>
                 <Link href="/pricing">Pricing</Link>

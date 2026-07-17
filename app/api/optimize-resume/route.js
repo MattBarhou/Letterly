@@ -89,7 +89,7 @@ export async function POST(request) {
       {
         role: "system",
         content:
-          "You are a resume coach for early-career software engineers. Always respond with valid JSON only. Never invent metrics — use bracket placeholders like [X%] or [N users] instead.",
+          "You are a resume coach for job seekers in any industry. Always respond with valid JSON only. Never invent metrics — use bracket placeholders like [X%], [N users], [N patients], or [N students] instead.",
       },
       {
         role: "user",

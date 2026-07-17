@@ -94,7 +94,7 @@ function InterviewPrepMaterial({ content }) {
       </section>
 
       <section>
-        <h4 className="font-semibold mb-2">Technical topics to review</h4>
+        <h4 className="font-semibold mb-2">Role-specific topics to review</h4>
         <ul className="list-disc pl-5 space-y-1 text-sm text-base-content/85">
           {content.technicalTopics.map((item) => (
             <li key={item}>{item}</li>

@@ -51,7 +51,7 @@ const PLANS = [
       "Unlimited ZIP exports",
       "Follow-up & thank-you emails",
       "Interview prep materials",
-      "For recruiting season",
+      "For active job searches",
     ],
     cta: "Subscribe",
     highlighted: false,
