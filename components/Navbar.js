@@ -17,40 +17,40 @@ export default function Navbar() {
             Letterly
           </Link>
         </div>
-      <div className="flex-none hidden sm:flex gap-1 items-center">
-        <Link href="/#how-it-works" className="btn btn-ghost btn-sm">
-          How it works
-        </Link>
-        <Link href="/pricing" className="btn btn-ghost btn-sm">
-          Pricing
-        </Link>
-        <Show when="signed-out">
-          <SignInButton mode="modal">
-            <button type="button" className="btn btn-ghost btn-sm">
-              Sign in
-            </button>
-          </SignInButton>
-          <SignUpButton mode="modal">
-            <button type="button" className="btn btn-primary btn-sm">
-              Get Started
-            </button>
-          </SignUpButton>
-        </Show>
-        <Show when="signed-in">
-          <Link href="/applications" className="btn btn-ghost btn-sm">
-            Applications
+        <div className="flex-none hidden sm:flex gap-1 items-center">
+          <Link href="/#how-it-works" className="btn btn-ghost btn-sm">
+            How it works
           </Link>
-          <Link href="/resume" className="btn btn-ghost btn-sm">
-            Resume
+          <Link href="/pricing" className="btn btn-ghost btn-sm">
+            Pricing
           </Link>
-          <Link href="/#generate" className="btn btn-primary btn-sm">
-            Generate
-          </Link>
-          <div className="ml-3">
-            <UserButton afterSignOutUrl="/" />
-          </div>
-        </Show>
-      </div>
+          <Show when="signed-out">
+            <SignInButton mode="modal">
+              <button type="button" className="btn btn-ghost btn-sm">
+                Sign in
+              </button>
+            </SignInButton>
+            <SignUpButton mode="modal">
+              <button type="button" className="btn btn-primary btn-sm">
+                Get Started
+              </button>
+            </SignUpButton>
+          </Show>
+          <Show when="signed-in">
+            <Link href="/applications" className="btn btn-ghost btn-sm">
+              Applications
+            </Link>
+            <Link href="/resume" className="btn btn-ghost btn-sm">
+              Resume
+            </Link>
+            <Link href="/#generate" className="btn btn-primary btn-sm">
+              Generate
+            </Link>
+            <div className="ml-3">
+              <UserButton afterSignOutUrl="/" />
+            </div>
+          </Show>
+        </div>
         <div className="flex-none sm:hidden">
           <details className="dropdown dropdown-end">
             <summary
@@ -88,7 +88,10 @@ export default function Navbar() {
                 </li>
                 <li>
                   <SignUpButton mode="modal">
-                    <button type="button" className="btn btn-primary btn-sm mt-1">
+                    <button
+                      type="button"
+                      className="btn btn-primary btn-sm mt-1"
+                    >
                       Get Started
                     </button>
                   </SignUpButton>
@@ -102,13 +105,18 @@ export default function Navbar() {
                   <Link href="/resume">Resume</Link>
                 </li>
                 <li>
-                  <Link href="/#generate" className="font-semibold text-primary">
+                  <Link
+                    href="/#generate"
+                    className="font-semibold text-primary"
+                  >
                     Generate
                   </Link>
                 </li>
                 <li className="mt-2 px-3 py-2">
                   <div className="flex items-center justify-between p-0">
-                    <span className="text-sm text-base-content/60">Account</span>
+                    <span className="text-sm text-base-content/60">
+                      Account
+                    </span>
                     <UserButton afterSignOutUrl="/" />
                   </div>
                 </li>
