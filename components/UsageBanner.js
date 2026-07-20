@@ -43,7 +43,7 @@ export default function UsageBanner({ refreshKey = 0 }) {
               Sign in
             </button>
           </SignInButton>{" "}
-          to get 3 free generations and 3 ZIP exports, then{" "}
+          to create 3 free application packages and export your documents, then{" "}
           <Link href="/pricing" className="link link-primary font-medium">
             choose a plan
           </Link>{" "}

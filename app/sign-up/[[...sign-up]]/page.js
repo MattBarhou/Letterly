@@ -11,7 +11,7 @@ export const metadata = createPageMetadata({
 export default function SignUpPage() {
   return (
     <div className="min-h-screen bg-base-200 flex items-center justify-center p-4">
-      <SignUp />
+      <SignUp forceRedirectUrl="/#generate" fallbackRedirectUrl="/#generate" />
     </div>
   );
 }

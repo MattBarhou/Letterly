@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 const OUTPUT_SECTIONS = [
   {
     key: "coverLetterBasic",
-    label: "Basic cover letter",
+    label: "Concise cover letter",
     detail: "Concise",
     description: "Short form for application portals",
   },

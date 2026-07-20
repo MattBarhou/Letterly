@@ -30,7 +30,7 @@ export default function Navbar() {
                 Sign in
               </button>
             </SignInButton>
-            <SignUpButton mode="modal">
+            <SignUpButton mode="modal" forceRedirectUrl="/#generate">
               <button type="button" className="btn btn-primary btn-sm">
                 Get Started
               </button>
@@ -87,7 +87,7 @@ export default function Navbar() {
                   </SignInButton>
                 </li>
                 <li>
-                  <SignUpButton mode="modal">
+                  <SignUpButton mode="modal" forceRedirectUrl="/#generate">
                     <button
                       type="button"
                       className="btn btn-primary btn-sm mt-1"

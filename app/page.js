@@ -31,22 +31,14 @@ const HOW_IT_WORKS = [
   {
     step: "3",
     title: "Get 5 tailored documents",
-    desc: "Cover letters, recruiter email, LinkedIn message, and ATS text — ready to copy, export, and send.",
+    desc: "Concise and detailed cover letters, recruiter email, LinkedIn message, and ATS text — ready to copy, export, and send.",
   },
-];
-
-const HERO_OUTPUTS = [
-  "Cover letter",
-  "ATS resume text",
-  "Recruiter email",
-  "LinkedIn outreach",
-  "Detailed cover letter",
 ];
 
 function HeroDemoVideo() {
   return (
-    <div className="relative w-full max-w-2xl mx-auto lg:max-w-none lg:mx-0">
-      <div className="absolute -inset-6 bg-primary/10 blur-3xl rounded-full pointer-events-none" />
+    <div className="relative w-full max-w-5xl mx-auto">
+      <div className="absolute -inset-3 sm:-inset-5 bg-primary/10 blur-3xl rounded-full pointer-events-none" />
       <figure className="relative rounded-2xl border border-base-300 shadow-xl shadow-primary/10 overflow-hidden ring-1 ring-base-content/5">
         <video
           className="block w-full h-auto"
@@ -82,72 +74,58 @@ export default function Home() {
           >
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent pointer-events-none" />
             <div className="relative max-w-6xl px-4 lg:px-8 mx-auto">
-              <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] gap-10 lg:gap-12 items-center">
-                <div className="text-center lg:text-left">
-                  <div className="badge badge-primary badge-outline mb-6 font-medium">
-                    AI that tailors every application
-                  </div>
-                  <h1
-                    id="hero-heading"
-                    className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold tracking-tight leading-[1.1]"
-                  >
-                    Upload one resume.{" "}
-                    <span className="text-primary">
-                      Get 5 tailored application documents
-                    </span>{" "}
-                    instantly.
-                  </h1>
-                  <p className="py-6 text-lg text-base-content/70 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                    Never rewrite another cover letter from scratch. Apply to
-                    ten jobs tonight instead of three — every document built
-                    from your resume, not generic AI fluff.
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
-                    <a
-                      href="#generate"
-                      className="btn btn-primary btn-lg shadow-lg shadow-primary/20"
-                    >
-                      Generate My First Application
-                    </a>
-                    <a href="#how-it-works" className="btn btn-ghost btn-lg">
-                      See how it works →
-                    </a>
-                  </div>
-                  <div className="flex flex-wrap justify-center lg:justify-start gap-x-5 gap-y-2 mt-6 text-sm text-base-content/55">
-                    <span className="flex items-center gap-1.5">
-                      <span className="text-success font-bold" aria-hidden="true">
-                        ✓
-                      </span>
-                      Free to start
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <span className="text-success font-bold" aria-hidden="true">
-                        ✓
-                      </span>
-                      No credit card required
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <span className="text-success font-bold" aria-hidden="true">
-                        ✓
-                      </span>
-                      3 free generations
-                    </span>
-                  </div>
-                  <ul className="mt-8 flex flex-wrap justify-center lg:justify-start gap-2 text-sm">
-                    {HERO_OUTPUTS.map((label) => (
-                      <li
-                        key={label}
-                        className="badge badge-outline badge-lg gap-1.5 font-normal border-base-300 text-base-content/70"
-                      >
-                        <span className="text-success font-bold" aria-hidden="true">
-                          ✓
-                        </span>
-                        {label}
-                      </li>
-                    ))}
-                  </ul>
+              <div className="text-center max-w-3xl mx-auto">
+                <div className="badge badge-primary badge-outline mb-6 font-medium">
+                  AI that tailors every application
                 </div>
+                <h1
+                  id="hero-heading"
+                  className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold tracking-tight leading-[1.1]"
+                >
+                  One resume.{" "}
+                  <span className="text-primary">
+                    Five tailored application documents.
+                  </span>
+                </h1>
+                <p className="py-6 text-lg text-base-content/70 max-w-xl mx-auto leading-relaxed">
+                  Paste any job posting and get a tailored cover letter,
+                  recruiter email, LinkedIn message and ATS-ready resume text in
+                  seconds.
+                </p>
+                <div className="flex flex-col sm:flex-row flex-wrap gap-3 justify-center">
+                  <a
+                    href="/sign-up"
+                    className="btn btn-primary btn-lg shadow-lg shadow-primary/20"
+                  >
+                    Start Free — Get 3 Application Packages
+                  </a>
+                  <a href="#how-it-works" className="btn btn-ghost btn-lg">
+                    See how it works →
+                  </a>
+                </div>
+                <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 mt-6 text-sm text-base-content/55">
+                  <span className="flex items-center gap-1.5">
+                    <span className="text-success font-bold" aria-hidden="true">
+                      ✓
+                    </span>
+                    Free to start
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="text-success font-bold" aria-hidden="true">
+                      ✓
+                    </span>
+                    No credit card required
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="text-success font-bold" aria-hidden="true">
+                      ✓
+                    </span>
+                    3 free generations
+                  </span>
+                </div>
+              </div>
 
+              <div className="mt-12 lg:mt-14">
                 <HeroDemoVideo />
               </div>
             </div>
@@ -199,6 +177,50 @@ export default function Home() {
               </div>
             </div>
           </section>
+
+          <div className="px-4 lg:px-8 py-8 bg-base-100 border-b border-base-300">
+            <div className="max-w-3xl mx-auto text-center">
+              <div className="inline-flex items-center justify-center gap-2 mb-4">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.75"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="w-4 h-4 text-base-content/45"
+                  aria-hidden="true"
+                >
+                  <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+                <h2 className="text-sm font-semibold tracking-wide text-base-content/80">
+                  Your resume stays private
+                </h2>
+              </div>
+              <div className="flex flex-col sm:flex-row sm:flex-wrap sm:justify-center gap-3 sm:gap-x-8 text-sm text-base-content/65">
+                <p className="flex items-center justify-center gap-2">
+                  <span className="text-success font-bold" aria-hidden="true">
+                    ✓
+                  </span>
+                  Never sold or shared
+                </p>
+                <p className="flex items-center justify-center gap-2">
+                  <span className="text-success font-bold" aria-hidden="true">
+                    ✓
+                  </span>
+                  Used only to generate documents
+                </p>
+                <p className="flex items-center justify-center gap-2">
+                  <span className="text-success font-bold" aria-hidden="true">
+                    ✓
+                  </span>
+                  Encrypted in transit and processed securely
+                </p>
+              </div>
+            </div>
+          </div>
 
           <ApplicationForm />
 
