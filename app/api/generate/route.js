@@ -7,6 +7,11 @@ import {
 } from "@/lib/companyResearch";
 import { createApplication, upsertUserProfile } from "@/lib/applications";
 import { resolveJobFields } from "@/lib/extractJobFields";
+import {
+  canGuestGenerate,
+  consumeGuestGenerateQuota,
+  toGuestPreviewOutputs,
+} from "@/lib/guestGenerate";
 import { callOpenAI } from "@/lib/openai";
 import { buildApplicationPrompt } from "@/lib/prompts";
 import { checkGenerateRateLimit, getRateLimitErrorMessage } from "@/lib/rateLimit";
@@ -87,29 +92,39 @@ function getOpenAIErrorMessage(error) {
 export async function POST(request) {
   try {
     const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json(
-        { error: "Sign in to generate application materials." },
-        { status: 401 }
-      );
+    const isGuest = !userId;
+
+    if (isGuest) {
+      const guestCheck = await canGuestGenerate(request);
+      if (!guestCheck.allowed) {
+        const status = guestCheck.code === "GUEST_LIMIT" ? 429 : 401;
+        return NextResponse.json(
+          {
+            error: guestCheck.error,
+            code: guestCheck.code,
+            signupUrl: "/sign-up?redirect_url=/pricing",
+          },
+          { status }
+        );
+      }
+    } else {
+      const usageCheck = await canGenerate(userId);
+      if (!usageCheck.allowed) {
+        return NextResponse.json(
+          {
+            error: getUsageLimitMessage(usageCheck),
+            code: "USAGE_LIMIT",
+            usage: usageCheck,
+          },
+          { status: 402 }
+        );
+      }
     }
 
     if (!process.env.OPENAI_API_KEY) {
       return NextResponse.json(
         { error: "Server is missing OPENAI_API_KEY. Add it to .env.local." },
         { status: 500 }
-      );
-    }
-
-    const usageCheck = await canGenerate(userId);
-    if (!usageCheck.allowed) {
-      return NextResponse.json(
-        {
-          error: getUsageLimitMessage(usageCheck),
-          code: "USAGE_LIMIT",
-          usage: usageCheck,
-        },
-        { status: 402 }
       );
     }
 
@@ -188,6 +203,17 @@ export async function POST(request) {
 
     const result = parseGeneratedContent(content);
 
+    if (isGuest) {
+      await consumeGuestGenerateQuota(request);
+      const preview = toGuestPreviewOutputs(result);
+      return NextResponse.json({
+        ...preview,
+        company,
+        jobTitle,
+        applicationId: null,
+      });
+    }
+
     await incrementUsage(userId);
 
     let applicationId = null;
@@ -220,6 +246,7 @@ export async function POST(request) {
 
     return NextResponse.json({
       ...result,
+      guestPreview: false,
       company,
       jobTitle,
       applicationId,

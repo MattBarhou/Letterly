@@ -1,6 +1,6 @@
 "use client";
 
-import { SignInButton, useAuth } from "@clerk/nextjs";
+import { useAuth } from "@clerk/nextjs";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
@@ -38,16 +38,16 @@ export default function UsageBanner({ refreshKey = 0 }) {
     return (
       <div className="alert bg-base-200 border border-base-300 mb-4">
         <span className="text-sm text-base-content/85">
-          <SignInButton mode="modal">
-            <button type="button" className="link link-primary font-medium">
-              Sign in
-            </button>
-          </SignInButton>{" "}
-          to create 3 free application packages and export your documents, then{" "}
-          <Link href="/pricing" className="link link-primary font-medium">
-            choose a plan
+          Try <span className="font-medium">1 free preview today</span> — your
+          detailed cover letter unlocks immediately. Other documents stay locked
+          until you{" "}
+          <Link
+            href="/sign-up?redirect_url=/pricing"
+            className="link link-primary font-medium"
+          >
+            sign up
           </Link>{" "}
-          when you need more.
+          for 3 full packages.
         </span>
       </div>
     );

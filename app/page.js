@@ -1,4 +1,5 @@
 import ApplicationForm from "@/components/ApplicationForm";
+import HeroSampleOutput from "@/components/HeroSampleOutput";
 import JsonLd from "@/components/JsonLd";
 import LetterlyLogo from "@/components/LetterlyLogo";
 import Navbar from "@/components/Navbar";
@@ -34,28 +35,6 @@ const HOW_IT_WORKS = [
     desc: "Concise and detailed cover letters, recruiter email, LinkedIn message, and ATS text — ready to copy, export, and send.",
   },
 ];
-
-function HeroDemoVideo() {
-  return (
-    <div className="relative w-full max-w-5xl mx-auto">
-      <div className="absolute -inset-3 sm:-inset-5 bg-primary/10 blur-3xl rounded-full pointer-events-none" />
-      <figure className="relative rounded-2xl border border-base-300 shadow-xl shadow-primary/10 overflow-hidden ring-1 ring-base-content/5">
-        <video
-          className="block w-full h-auto"
-          src="/hero_demo.mp4"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          aria-label="Product demo: upload a resume, paste a job posting, and generate five tailored application documents"
-        >
-          Your browser does not support the video tag.
-        </video>
-      </figure>
-    </div>
-  );
-}
 
 export default function Home() {
   return (
@@ -94,13 +73,10 @@ export default function Home() {
                 </p>
                 <div className="flex flex-col sm:flex-row flex-wrap gap-3 justify-center">
                   <a
-                    href="/sign-up"
-                    className="btn btn-primary btn-lg shadow-lg shadow-primary/20"
+                    href="#generate"
+                    className="btn btn-primary btn-lg w-full sm:w-auto shadow-lg shadow-primary/20 min-h-12"
                   >
-                    Start Free — Get 3 Application Packages
-                  </a>
-                  <a href="#how-it-works" className="btn btn-ghost btn-lg">
-                    See how it works →
+                    Generate free — see your cover letter
                   </a>
                 </div>
                 <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 mt-6 text-sm text-base-content/55">
@@ -108,7 +84,7 @@ export default function Home() {
                     <span className="text-success font-bold" aria-hidden="true">
                       ✓
                     </span>
-                    Free to start
+                    Free preview — no signup
                   </span>
                   <span className="flex items-center gap-1.5">
                     <span className="text-success font-bold" aria-hidden="true">
@@ -120,13 +96,13 @@ export default function Home() {
                     <span className="text-success font-bold" aria-hidden="true">
                       ✓
                     </span>
-                    3 free generations
+                    3 full packages after signup
                   </span>
                 </div>
               </div>
 
               <div className="mt-12 lg:mt-14">
-                <HeroDemoVideo />
+                <HeroSampleOutput />
               </div>
             </div>
           </section>

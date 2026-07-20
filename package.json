@@ -6,7 +6,8 @@
     "dev": "next dev --webpack",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "generate:hero": "node scripts/generate-hero-sample.mjs"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.5.8",

@@ -34,6 +34,8 @@ export default function ApplicationForm() {
   const [importError, setImportError] = useState("");
   const [features, setFeatures] = useState(null);
   const [usageRefreshKey, setUsageRefreshKey] = useState(0);
+  const [isGuestPreview, setIsGuestPreview] = useState(false);
+  const [guestLimitReached, setGuestLimitReached] = useState(false);
   const prefetchTimeoutRef = useRef(null);
   const lastPrefetchedCompanyRef = useRef("");
 
@@ -174,6 +176,7 @@ export default function ApplicationForm() {
     setErrors({});
     setApiError("");
     setSavedApplicationId(null);
+    setGuestLimitReached(false);
     setIsGenerating(true);
 
     try {
@@ -195,12 +198,20 @@ export default function ApplicationForm() {
 
       if (!response.ok) {
         if (response.status === 401) {
-          setApiError("Sign in to generate application materials.");
+          setApiError(
+            data.error ||
+              "Guest previews are unavailable. Sign up free to generate."
+          );
+        } else if (response.status === 429 && data.code === "GUEST_LIMIT") {
+          setApiError(data.error || "You've used today's free preview.");
+          setGuestLimitReached(true);
         } else if (response.status === 402) {
           setApiError(
             data.error ||
               "You've reached your generation limit. Upgrade your plan to continue."
           );
+        } else if (response.status === 429) {
+          setApiError(data.error || "Rate limit reached. Please try again later.");
         } else {
           setApiError(data.error || "Something went wrong. Please try again.");
         }
@@ -219,6 +230,8 @@ export default function ApplicationForm() {
         jobTitle: prev.jobTitle.trim() ? prev.jobTitle : nextJobTitle,
       }));
       setOutputs(data);
+      setIsGuestPreview(Boolean(data.guestPreview));
+      setGuestLimitReached(false);
       setSavedApplicationId(data.applicationId || null);
       setUsageRefreshKey((key) => key + 1);
       document.getElementById("results")?.scrollIntoView({ behavior: "smooth" });
@@ -244,8 +257,9 @@ export default function ApplicationForm() {
             Generate your first application
           </h2>
           <p className="text-base-content/85 max-w-lg mx-auto">
-            Upload your resume, paste the job posting, and get five tailored
-            documents — company and role are detected automatically.
+            {isSignedIn
+              ? "Upload your resume, paste the job posting, and get five tailored documents — company and role are detected automatically."
+              : "Upload your resume and paste a job posting for a free preview — see your detailed cover letter instantly, then unlock the rest."}
           </p>
         </div>
 
@@ -482,7 +496,7 @@ export default function ApplicationForm() {
             <div className="card-actions justify-end pt-4">
               <button
                 type="submit"
-                className="btn btn-primary btn-lg w-full sm:w-auto min-w-[220px] shadow-lg shadow-primary/20"
+                className="btn btn-primary btn-lg w-full sm:w-auto min-w-[220px] min-h-12 shadow-lg shadow-primary/20"
                 disabled={isGenerating}
               >
                 {isGenerating ? (
@@ -490,8 +504,10 @@ export default function ApplicationForm() {
                     <span className="loading loading-spinner loading-sm" />
                     Generating your materials…
                   </>
-                ) : (
+                ) : isSignedIn ? (
                   "Generate My Application"
+                ) : (
+                  "Generate free preview"
                 )}
               </button>
             </div>
@@ -509,6 +525,23 @@ export default function ApplicationForm() {
             {apiError && (
               <div role="alert" className="alert alert-error mt-2">
                 <span>{apiError}</span>
+              </div>
+            )}
+
+            {guestLimitReached && !isSignedIn && (
+              <div className="alert bg-primary/5 border border-primary/20 mt-2">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 w-full">
+                  <span className="text-sm text-base-content/85">
+                    Ready for the full package? Sign up free to unlock all 5
+                    documents and get 3 generations.
+                  </span>
+                  <Link
+                    href="/sign-up?redirect_url=/pricing"
+                    className="btn btn-primary btn-sm min-h-11 w-full sm:w-auto shrink-0"
+                  >
+                    Unlock all documents
+                  </Link>
+                </div>
               </div>
             )}
           </div>
@@ -533,6 +566,7 @@ export default function ApplicationForm() {
               outputs={outputs}
               company={resolvedCompany || form.company}
               jobTitle={resolvedJobTitle || form.jobTitle}
+              guestPreview={isGuestPreview}
             />
           </>
         )}
