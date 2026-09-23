@@ -79,6 +79,12 @@ gtag('js', new Date());
 gtag('config', 'AW-18328721902');
             `}
           </Script>
+          <Script
+            async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8490915553309305"
+            crossOrigin="anonymous"
+            strategy="afterInteractive"
+          />
           {children}
           <Analytics />
           <SpeedInsights />
