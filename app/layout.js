@@ -56,6 +56,9 @@ export const metadata = {
       "max-video-preview": -1,
     },
   },
+  other: {
+    "google-adsense-account": "ca-pub-8490915553309305",
+  },
 };
 
 export default function RootLayout({ children }) {
